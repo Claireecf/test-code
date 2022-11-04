@@ -12,6 +12,7 @@ use opentelemetry::{
 mod shared;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+const SVC_NAME: &str = env!("CARGO_CRATE_NAME");
 
 #[async_std::main]
 async fn main() -> std::result::Result<(), http_types::Error>{
@@ -21,7 +22,7 @@ async fn main() -> std::result::Result<(), http_types::Error>{
     femme::with_level(femme::LevelFilter::Info);
     shared::init_global_propagator();
     let _tracer = opentelemetry_jaeger::new_agent_pipeline()
-        .with_service_name("http2_client")
+        .with_service_name(SVC_NAME)
         .with_trace_config(trace::config().with_resource(Resource::new(tags())))
         .install_batch(opentelemetry::runtime::AsyncStd);
     let otl_mw = opentelemetry_surf::OpenTelemetryTracingMiddleware::default();
